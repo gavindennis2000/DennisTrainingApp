@@ -71,7 +71,13 @@ const Register = ({user, setUser, setCurrentPage}) => {
         break;
       case "success":
         alert("Account successfully created!");
-        setUser(newAccount.username);
+        setUser({
+          loggedIn: true,
+          username: newAccount.username,
+          firstName: newAccount.firstName,
+          lastName: newAccount.lastName, 
+          email: newAccount.email,
+        });
         setNewAccount(initialAccount);
         setError({...newError});
         break;
