@@ -1,6 +1,5 @@
-import React from 'react'
-import { useState } from 'react';
-import { Link } from 'react-router-dom'
+import { React, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom'
 import { Paper, Button, Stack } from '@mui/material';
 
 const buttonWidth = "180px", buttonHeight = "50px";
@@ -8,12 +7,21 @@ const buttonCurrentPageColor = '#b3e7ff';
 
 
 
-const Navbar = ({user}) => {
-  const [currentButton, setCurrentButton] = useState('/');
+const Navbar = ({user, setUser, currentPage, setCurrentPage}) => {
+
+  const navigate = useNavigate();
 
   const handleClick = (path) => {
-    setCurrentButton(path);
-    console.log(path);
+    console.log(path)
+    if (path === "/logout") {
+      // log out the user
+      alert("Successfully logged out.");
+      setUser('');
+      setCurrentPage("/");
+      navigate('/');
+      return;
+    }
+    setCurrentPage(path);
   }
 
   return (
@@ -38,30 +46,30 @@ const Navbar = ({user}) => {
         }}>
           <Stack direction="row" spacing={2}>
             <Button component={Link} to="/" onClick={() => { handleClick("/") }} sx={{
-              minWidth: buttonWidth,
-              minHeight: buttonHeight,
-              backgroundColor: currentButton == "/" ? buttonCurrentPageColor : "transparent",
+              width: buttonWidth,
+              height: buttonHeight,
+              backgroundColor: currentPage == "/" ? buttonCurrentPageColor : "transparent",
               borderRadius: '0',
             }}>Home</Button>
             {/* navbar buttons when user is logged in */}
             {user ? (
               <>
                 <Button component={Link} to="/account" onClick={() => { handleClick("/account") }} sx={{
-                  minWidth: buttonWidth,
-                  minHeight: buttonHeight,
-                  backgroundColor: currentButton == "/account" ? buttonCurrentPageColor : "transparent",
+                  width: buttonWidth,
+                  height: buttonHeight,
+                  backgroundColor: currentPage == "/account" ? buttonCurrentPageColor : "transparent",
                   borderRadius: '0',
                 }}>Account</Button>
-                <Button component={Link} to="/logout" onClick={() => { handleClick("/logout") }} sx={{
-                  minWidth: buttonWidth,
-                  minHeight: buttonHeight,
-                  backgroundColor: currentButton == "/logout" ? buttonCurrentPageColor : "transparent",
+                <Button component={Link} to="/" onClick={() => { handleClick("/logout") }} sx={{
+                  width: buttonWidth,
+                  height: buttonHeight,
+                  backgroundColor: currentPage == "/logout" ? buttonCurrentPageColor : "transparent",
                   borderRadius: '0',
                 }}>Logout</Button>
                 <Button component={Link} to="/about" onClick={() => { handleClick("/about") }} sx={{
-                  minWidth: buttonWidth,
-                  minHeight: buttonHeight,
-                  backgroundColor: currentButton == "/about" ? buttonCurrentPageColor : "transparent",
+                  width: buttonWidth,
+                  height: buttonHeight,
+                  backgroundColor: currentPage == "/about" ? buttonCurrentPageColor : "transparent",
                   borderRadius: '0',
                 }}>About</Button>
                 </>
@@ -69,21 +77,21 @@ const Navbar = ({user}) => {
               <>
                 {/* navbar buttons when user is not logged in */}
                 <Button component={Link} to="/login" onClick={() => { handleClick("/login") }} sx={{
-                  minWidth: buttonWidth,
-                  minHeight: buttonHeight,
-                  backgroundColor: currentButton == "/login" ? buttonCurrentPageColor : "transparent",
+                  width: buttonWidth,
+                  height: buttonHeight,
+                  backgroundColor: currentPage == "/login" ? buttonCurrentPageColor : "transparent",
                   borderRadius: '0',
                 }}>Log in</Button>
                 <Button component={Link} to="/register" onClick={() => { handleClick("/register") }} sx={{
-                  minWidth: buttonWidth,
-                  minHeight: buttonHeight,
-                  backgroundColor: currentButton == "/register" ? buttonCurrentPageColor : "transparent",
+                  width: buttonWidth,
+                  height: buttonHeight,
+                  backgroundColor: currentPage == "/register" ? buttonCurrentPageColor : "transparent",
                   borderRadius: '0',
                 }}>Create Account</Button>
                 <Button component={Link} to="/about" onClick={() => { handleClick("/about") }} sx={{
-                  minWidth: buttonWidth,
-                  minHeight: buttonHeight,
-                  backgroundColor: currentButton == "/about" ? buttonCurrentPageColor : "transparent",
+                  width: buttonWidth,
+                  height: buttonHeight,
+                  backgroundColor: currentPage == "/about" ? buttonCurrentPageColor : "transparent",
                   borderRadius: '0',
                 }}>About</Button>
                 </>
@@ -92,7 +100,7 @@ const Navbar = ({user}) => {
         </Paper>
         <Paper square sx={{
           backgroundColor: '#b3e7ff',
-          minHeight: '10px'
+          height: '10px'
         }}>
           <Stack direction="row" spacing={6}>
           </Stack>

@@ -1,9 +1,10 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Alert, Button, IconButton, Snackbar, Stack, TextField } from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close'
 import { useAccountStore } from '../store/account';
+import { useNavigate } from 'react-router-dom';
 
-const Register = () => {
+const Register = ({user, setUser, setCurrentPage}) => {
   const initialAccount = {
     username: '',
     password: '',
@@ -69,13 +70,14 @@ const Register = () => {
         }
         break;
       case "success":
-        setNotification("Account successfully created!");
+        alert("Account successfully created!");
+        setUser(newAccount.username);
         setNewAccount(initialAccount);
-        console.log(initialAccount);
         setError({...newError});
         break;
       case "can't create":
         setNotification("The username or email address is already in use.")
+        setError({...newError});
         break;
       default:
         setNotification("Something went wrong. Try again.");
@@ -105,6 +107,15 @@ const Register = () => {
       </IconButton>
     </React.Fragment>
   );
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (user === '') return;
+    console.log("user has changed:", user);
+    navigate('/');
+    setCurrentPage('/');
+  }, [user])
 
   return (
     <div style={{
