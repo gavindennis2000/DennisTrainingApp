@@ -1,7 +1,8 @@
 import express from 'express';
 import dotenv from "dotenv"
 import { connectDB } from './config/db.js';
-import Product from './models/product.model.js';
+import Account from './models/account.model.js';
+import bcrypt from 'bcrypt';
 
 dotenv.config();
 
@@ -9,32 +10,42 @@ const app = express();
 
 app.use(express.json());  // allows us to accept json data in request body
 
-app.post("/api/products", async (req, res) => {
-    const product = req.body;  // user will send this data
+app.post("/api/accounts", async (req, res) => {
+    const { username, password, firstName, lastName, email } = req.body;  // user will send this data
+    const passwordHash = await bcrypt.hash(password, 10);
 
-    if (!product.name || !product.price || !product.image) {
+    if (!username || !password || !firstName || !lastName || !email) {
         return res.status(400).json({ success: false, message: "Please provide all fields" });
     }
 
-    const newProduct = new Product(product);
-
     try {
-        await newProduct.save();
-        res.status(201).json({ success: true, data: newProduct });
+        const saltRounds = 10;
+        const hashedPassword = await bcrypt.hash(password, saltRounds);
+
+        const newAccount = new Account({
+            username,
+            passwordHash: hashedPassword,
+            firstName,
+            lastName,
+            email
+        });
+
+        await newAccount.save();
+        res.status(201).json({ success: true, data: newAccount });
     } catch (error) {
-        console.error("Error in create product:", error.message);
-        res.status(500).json({ success: false, message: "Server Error" });
+        console.error("Error in create account:", error.message);
+        res.status(500).json({ success: false, message: "can't create" });
     }
 });
 
-app.delete("/api/products/:id", async (req, res) => {
+app.delete("/api/accounts/:id", async (req, res) => {
     const {id} = req.params;
 
     try {
-        await Product.findByIdAndDelete(id);
-        res.status(200).json({ success: true, message: "product deleted" });
+        await Account.findByIdAndDelete(id);
+        res.status(200).json({ success: true, message: "account deleted" });
     } catch (error) {
-        res.status(404).json({ success: false, message: "Product not found" });
+        res.status(404).json({ success: false, message: "account not found" });
     }
 });
 

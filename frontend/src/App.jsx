@@ -1,8 +1,5 @@
+import React, { useState } from 'react';
 import { Route, Routes } from 'react-router-dom';
-// import Login from './pages/Login';
-// import Register from './pages/Register';
-// import About from './pages/About';
-// import Home from './pages/Home';
 import { Login, About, Register, Home } from './pages';
 import { Navbar, Footer } from './components';
 import { createTheme, CssBaseline, Paper } from '@mui/material';
@@ -15,34 +12,26 @@ const theme = createTheme({
 });
 
 function App() {
+  const [user, setUser] = useState("")
+
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <div style={{
-        minHeight: '100vh',
-        margin: 0,
-        padding: 0,
-        backgroundImage: 'url(/background.avif)',
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat',
-        display: 'flex',
-        flexDirection: 'column',
-      }}>
+      <div>
         <div style={{
           marginLeft: '20px',
           marginRight: '20px',
           marginTop: '0px',
           marginBottom: '10px',
         }}>
-          <Navbar />
+          <Navbar user={user} />
           <Paper square sx={{
               backgroundColor: 'rgba(245, 252, 255, 0.9)',
           }}>
             <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/Login" element={<Login />} />
-              <Route path="/Register" element={<Register />} />
+              <Route path="/" element={<Home user={user} />} />
+              <Route path="/Login" element={<Login user={user} setUser={setUser} />} />
+              <Route path="/Register" element={<Register user={user} setUser={setUser} />} />
               <Route path="/About" element={<About />} />
             </Routes>
 
