@@ -10,6 +10,41 @@ const app = express();
 
 app.use(express.json());  // allows us to accept json data in request body
 
+app.post("/api/login", async (req, res) => {
+    const { usernameOrEmail, password } = req.body;
+
+    if (!usernameOrEmail || !password) {
+            console.log("here i am")
+            return res.status(400).json({message: 'Missing username or password'});
+        }
+    console.log("user:", usernameOrEmail, "pass:", password)
+
+    try {
+        const user = await Account.findOne({
+            $or: [
+                { username: usernameOrEmail.toLowerCase() },
+                { email : usernameOrEmail.toLowerCase() }
+            ]
+        });
+
+        if (!user) {
+            return res.status(401).json({ success: false, message: 'invalid username/password' });
+        }
+
+        // compare given password with hashed
+        const passwordsMatch = await bcrypt.compare(password, user.passwordHash);
+
+        if (passwordsMatch) {
+            const { passwordHash, ...userData } = user.toObject();
+            return res.json({ success: true, user: userData});
+        }
+        return res.status(401).json({ success: false, message: 'invalid username/password' });
+        
+    } catch (error) {
+
+    }
+});
+
 app.post("/api/accounts", async (req, res) => {
     const { username, password, firstName, lastName, email } = req.body;  // user will send this data
     const passwordHash = await bcrypt.hash(password, 10);

@@ -1,11 +1,73 @@
-import React from 'react'
-import { Button, Stack, TextField } from '@mui/material'
-import { Link } from 'react-router-dom'
+import React, { useState, useEffect } from 'react'
+import { Button, IconButton, Snackbar, Stack, TextField } from '@mui/material'
+import CloseIcon from '@mui/icons-material/Close'
+import { Link, useNavigate } from 'react-router-dom'
+import { useAccountStore } from '../store/account'
 
 const Login = ({user, setUser, setCurrentPage}) => {
-  const handleSubmit = async () => {
+  const [loginUser, setLoginUser] = useState({
+    usernameOrEmail: "",
+    password: ""
+  });
 
+  const [open, setOpen] = useState(false);  // for notifications
+  const [notification, setNotification] = useState("");
+  const handleClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+  
+    setOpen(false);
   }
+  const action = (
+      <React.Fragment>
+        <IconButton
+          size="small"
+          aria-label="close"
+          color="inherit"
+          onClick={handleClose}
+        >
+          <CloseIcon fontSize="small" />
+        </IconButton>
+      </React.Fragment>
+    );
+
+  const { loginAccount } = useAccountStore();
+
+  const handleSubmit = async () => {
+    const {success, message, user} = await loginAccount(loginUser);
+    console.log("Success", success, "Message", message, "User:", user);
+
+    switch (message) {
+      case "Missing username or password":
+        setNotification("Missing username or password.")
+        break;
+      case "invalid username/password":
+        setNotification("Incorrect username or password. Please try again.");
+        break;
+      default:
+        setUser({
+          loggedIn: true,
+          username: user.username,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          email: user.email
+        });
+        alert("Log in successful!");
+        break;
+    }
+    setOpen(true);
+  }
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!user.loggedIn) 
+      return;
+    setCurrentPage('/');
+    navigate('/');
+  }, [user])
+
   return (
     <div style={{
         margin: '20px', 
@@ -21,6 +83,7 @@ const Login = ({user, setUser, setCurrentPage}) => {
             // type="password"
             autoComplete="current-password"
             variant="filled"
+            onChange={(e) => setLoginUser({...loginUser, usernameOrEmail: e.target.value})}
           />
           <TextField
             id="filled-password-input"
@@ -28,6 +91,7 @@ const Login = ({user, setUser, setCurrentPage}) => {
             type="password"
             autoComplete="current-password"
             variant="filled"
+            onChange={(e) => setLoginUser({...loginUser, password: e.target.value})}
           />
           <Button onClick={handleSubmit}>Submit</Button>
         </Stack>
@@ -35,6 +99,13 @@ const Login = ({user, setUser, setCurrentPage}) => {
         <Link to={"/reset-password"} style={{ textDecoration: 'none' }}>
           <p onClick={() => { setCurrentPage("/reset-password") }}>Click here to reset your password</p>
         </Link>
+        <Snackbar
+          open={open}
+            autoHideDuration={10000}
+            onClose={handleClose}
+            message={notification}
+            action={action}
+        />
       </div>
   )
 }

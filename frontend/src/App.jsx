@@ -12,7 +12,13 @@ const theme = createTheme({
 });
 
 function App() {
-  const [user, setUser] = useState("")
+  const [user, setUser] = useState({
+    loggedIn: false,
+    username: "",
+    firstName: "",
+    lastName: "",
+    email: "",
+  })
   const [currentPage, setCurrentPage] = useState("/");
 
   useEffect(() => {
@@ -26,7 +32,7 @@ function App() {
           pathStr = currentPage.charAt(1).toUpperCase() + currentPage.slice(2);
           break;
       }
-      document.title = (currentPage === "/") ? (user === "") ? `HardGains Training Log` : `HardGains | ${user}` : `HardGains | ${pathStr}`;
+      document.title = (currentPage === "/") ? (!user.loggedIn) ? `HardGains Training Log` : `HardGains | ${user}` : `HardGains | ${pathStr}`;
     }, [currentPage]);
 
   return (

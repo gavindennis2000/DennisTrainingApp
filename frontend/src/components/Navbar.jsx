@@ -1,5 +1,5 @@
 import { React, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { Paper, Button, Stack } from '@mui/material';
 
 const buttonWidth = "180px", buttonHeight = "50px";
@@ -10,13 +10,21 @@ const buttonCurrentPageColor = '#b3e7ff';
 const Navbar = ({user, setUser, currentPage, setCurrentPage}) => {
 
   const navigate = useNavigate();
+  const location = useLocation();
+  console.log(location.pathname);
 
   const handleClick = (path) => {
     console.log(path)
     if (path === "/logout") {
       // log out the user
       alert("Successfully logged out.");
-      setUser('');
+      setUser({
+        loggedIn: false,
+        username: "",
+        firstName: "",
+        lastName: "",
+        email: "",
+      });
       setCurrentPage("/");
       navigate('/');
       return;
@@ -52,7 +60,7 @@ const Navbar = ({user, setUser, currentPage, setCurrentPage}) => {
               borderRadius: '0',
             }}>Home</Button>
             {/* navbar buttons when user is logged in */}
-            {user ? (
+            {user.loggedIn ? (
               <>
                 <Button component={Link} to="/account" onClick={() => { handleClick("/account") }} sx={{
                   width: buttonWidth,

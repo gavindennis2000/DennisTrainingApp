@@ -40,5 +40,24 @@ export const useAccountStore = create((set) => ({
         }
         set((state) => ({accounts:[...state.accounts, data.data]}));
         return { success: true, message: "success"}
+    },
+    loginAccount: async ({usernameOrEmail, password}) => {
+        try {
+            const res = await fetch('/api/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({usernameOrEmail, password})
+            });
+            const data = await res.json();
+
+            if (!res.ok) {
+                return { success: false, message: data.message};
+            }
+
+            return { success: true, message: data.message, user: data.user };
+        } catch (error) {
+            return { success: false, message: "login failed" };
+        }
+
     }
 }))

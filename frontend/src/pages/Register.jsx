@@ -111,11 +111,12 @@ const Register = ({user, setUser, setCurrentPage}) => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (user === '') return;
-    console.log("user has changed:", user);
+    if (!user.loggedIn) 
+      return;
     navigate('/');
     setCurrentPage('/');
-  }, [user])
+  }, [user]);
+
 
   return (
     <div style={{
@@ -178,7 +179,7 @@ const Register = ({user, setUser, setCurrentPage}) => {
           </Button>
           <Snackbar 
             open={open}
-            autoHideDuration={10000}
+            autoHideDuration={5000}
             onClose={handleClose}
             message={notification}
             action={action}
