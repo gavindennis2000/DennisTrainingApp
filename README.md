@@ -1,2 +1,15 @@
-# DennisTrainingApp
-Name WIP. Created by Brandon and Gavin Dennis. A basic training log application for hypertrophy and strength workouts.
+# HardGains Training App
+Last updated on 2025 May 24
+
+Created by Gavin and Brandon Dennis. A basic training log web application for hypertrophy and strength workouts.
+
+Summary
+
+Resources/Documentation
+    MERN Stack Tutorial
+        https://www.youtube.com/watch?v=O3BUHwfHf84&t=5914s 
+    
+
+Problems Encountered
+
+Existing issues

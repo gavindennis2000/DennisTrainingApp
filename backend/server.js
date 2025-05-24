@@ -68,6 +68,10 @@ app.post("/api/accounts", async (req, res) => {
         await newAccount.save();
         res.status(201).json({ success: true, data: newAccount });
     } catch (error) {
+        if (error.code === 11000) {
+            // Duplicate key violation
+            return res.status(409).json({ success: false, message: "Username or email already exists" });
+        }
         console.error("Error in create account:", error.message);
         res.status(500).json({ success: false, message: "can't create" });
     }

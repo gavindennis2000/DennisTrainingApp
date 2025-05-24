@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Button, IconButton, Snackbar, Stack, TextField } from '@mui/material'
+import { Alert, Button, IconButton, Snackbar, Stack, TextField } from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAccountStore } from '../store/account'
@@ -53,7 +53,8 @@ const Login = ({user, setUser, setCurrentPage}) => {
           lastName: user.lastName,
           email: user.email
         });
-        alert("Log in successful!");
+        setNotification("Log in successful!");
+        // alert("Log in successful!");
         break;
     }
     setOpen(true);
@@ -101,11 +102,19 @@ const Login = ({user, setUser, setCurrentPage}) => {
         </Link>
         <Snackbar
           open={open}
-            autoHideDuration={10000}
+            autoHideDuration={3000}
             onClose={handleClose}
-            message={notification}
             action={action}
-        />
+        >
+          <Alert
+            onClose={handleClose}
+            severity="error"
+            variant="filled"
+            sx={{ width: '100%' }}
+          >
+            {notification}
+          </Alert>
+        </Snackbar>
       </div>
   )
 }

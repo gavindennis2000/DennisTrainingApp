@@ -187,12 +187,16 @@ const Register = ({user, setUser, setCurrentPage}) => {
             open={open}
             autoHideDuration={5000}
             onClose={handleClose}
-            message={notification}
             action={action}
           >
-            {/* <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>
-              Account created successfully!
-            </Alert> */}
+            <Alert
+              onClose={handleClose}
+              severity="error"
+              variant="filled"
+              sx={{ width: '100%' }}
+            >
+              {notification}
+            </Alert>
           </Snackbar>  
         </Stack>
       </div>

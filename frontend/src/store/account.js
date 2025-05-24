@@ -32,7 +32,7 @@ export const useAccountStore = create((set) => ({
             headers: {
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify(newAccount)
+            body: JSON.stringify(accountData)
         })
         const data = await res.json();
         if (data.message === "can't create") {

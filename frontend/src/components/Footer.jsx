@@ -13,7 +13,7 @@ const Footer = () => {
           fontSize: '14px',
         }}>
           <div>HardGains Training Log</div>
-          <div>Created by Brandon and Gavin Dennis</div>
+          <div>Created by Gavin and Brandon Dennis</div>
     </div>
   )
 }

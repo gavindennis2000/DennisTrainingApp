@@ -17,7 +17,6 @@ const Navbar = ({user, setUser, currentPage, setCurrentPage}) => {
     console.log(path)
     if (path === "/logout") {
       // log out the user
-      alert("Successfully logged out.");
       setUser({
         loggedIn: false,
         username: "",
