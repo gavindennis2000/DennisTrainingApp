@@ -27,6 +27,21 @@ const accountSchema = new mongoose.Schema({
         trim: true,
         lowercase: true
     },
+    accountCreated: {
+        type: Date,
+        required: true,
+        default: Date.now,
+    },
+    trainingPosts: {
+        type: Number,
+        required: true,
+        default: 0
+    },
+    profilePicture: {
+        type: String,
+        required: true, 
+        default: "/uploads/default"
+    }
 }, {
     timestamps: true
 });

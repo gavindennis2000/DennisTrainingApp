@@ -8,6 +8,8 @@ Summary
 Resources/Documentation
     MERN Stack Tutorial
         https://www.youtube.com/watch?v=O3BUHwfHf84&t=5914s 
+    Free pictures for website on Unsplash
+        https://unsplash.com/
     
 
 Problems Encountered

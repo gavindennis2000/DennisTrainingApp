@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Route, Routes } from 'react-router-dom';
-import { Login, About, Register, Home, NotFound } from './pages';
+import { useNavigate, useLocation, Route, Routes } from 'react-router-dom';
+import { About, Account, Feed, Home, Login, NotFound, Register, ResetPassword } from './pages';
 import { Navbar, Footer } from './components';
 import { Alert, createTheme, CssBaseline, IconButton, Snackbar, Paper } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close'
@@ -13,14 +13,19 @@ const theme = createTheme({
 });
 
 function App() {
+  const location = useLocation();
+  const navigate = useNavigate();
+
   const [user, setUser] = useState({
     loggedIn: false,
     username: "",
     firstName: "",
     lastName: "",
     email: "",
+    accountCreated: null,
+    trainingPosts: 0,
+    profilePicture: "",
   })
-  const [currentPage, setCurrentPage] = useState("/");
   const [notification, setNotification] = useState("");
   const [open, setOpen] = useState(false);
 
@@ -43,16 +48,16 @@ function App() {
   useEffect(() => {
     // when the page changes, update the webpage title 
     let pathStr = "";
-    switch (currentPage) {
+    switch (location.pathname) {
       case "/reset-password":
         pathStr = "Password Reset";
         break;
       default:
-        pathStr = currentPage.charAt(1).toUpperCase() + currentPage.slice(2);
+        pathStr = location.pathname.charAt(1).toUpperCase() + location.pathname.slice(2);
         break;
     }
-    document.title = (currentPage === "/") ? (!user.loggedIn) ? `HardGains Training Log` : `HardGains | ${user.username}` : `HardGains | ${pathStr}`;
-  }, [currentPage]);
+    document.title = (location.pathname === "/") ? (!user.loggedIn) ? `HardGains Training Log` : `HardGains | ${user.username}` : `HardGains | ${pathStr}`;
+  }, [location.pathname]);
 
   const handleClose = (event, reason) => {
     if (reason === 'clickaway') {
@@ -76,23 +81,26 @@ function App() {
 
   return (
     <ThemeProvider theme={theme}>
+      <center>
       <CssBaseline />
       <div>
         <div style={{
-          marginLeft: '20px',
-          marginRight: '20px',
+          marginLeft: '150px',
+          marginRight: '150px',
           marginTop: '0px',
           marginBottom: '10px',
         }}>
-          <Navbar user={user} setUser={setUser} currentPage={currentPage} setCurrentPage={setCurrentPage} />
+          <Navbar user={user} setUser={setUser} />
           <Paper square sx={{
               backgroundColor: 'rgba(245, 252, 255, 0.9)',
           }}>
             <Routes>
               <Route path="/" element={<Home user={user} />} />
-              <Route path="/Login" element={<Login user={user} setUser={setUser} setCurrentPage={setCurrentPage} />} />
-              <Route path="/Register" element={<Register user={user} setUser={setUser} setCurrentPage={setCurrentPage} />} />
               <Route path="/About" element={<About />} />
+              <Route path="/Account" element={ <Account user={user} setUser={setUser} /> } />
+              <Route path="/Feed" element={<Feed user={user} />} />
+              <Route path="/Login" element={<Login user={user} setUser={setUser} />} />
+              <Route path="/Register" element={<Register user={user} setUser={setUser} />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
 
@@ -105,6 +113,7 @@ function App() {
           autoHideDuration={3000}
           onClose={handleClose}
           action={action}
+          anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
         >
           <Alert
             onClose={handleClose}
@@ -116,6 +125,7 @@ function App() {
           </Alert>
         </Snackbar>  
       </div>
+      </center>
     </ThemeProvider>
   );
 }

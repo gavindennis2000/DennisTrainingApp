@@ -1,5 +1,5 @@
 import React from 'react'
-import { Paper } from '@mui/material'
+import { Box, Paper } from '@mui/material'
 
 const About = () => {
   return (
@@ -17,7 +17,7 @@ const About = () => {
           justifyContent: 'space-between',
           alignItems: 'center',
           height: '40px', // or adjust as needed
-          padding: '0 20px',
+          padding: '0 40px',
           backgroundColor: 'rgb(230, 247, 255, 0.9)', // optional for visibility
           color: '#1976d2',
           fontSize: '14px',
@@ -30,7 +30,9 @@ const About = () => {
           marginLeft: '20px',
           marginRight: '20px',
         }}>
-        <h4>HardGains is designed to help you log your training and share with friends. </h4>
+        <Box>
+          HardGains is designed to help you log your training and share with friends.
+        </Box>
       </div>
     </>
   )

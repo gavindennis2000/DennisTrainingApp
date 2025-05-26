@@ -38,6 +38,9 @@ export const useAccountStore = create((set) => ({
         if (data.message === "can't create") {
             return { success: false, message: "can't create"}
         }
+        else if (data.message === "Username or email already exists") {
+            return { success: false, message: "duplicate" }
+        }
         set((state) => ({accounts:[...state.accounts, data.data]}));
         return { success: true, message: "success"}
     },

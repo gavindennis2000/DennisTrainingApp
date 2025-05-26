@@ -70,6 +70,7 @@ app.post("/api/accounts", async (req, res) => {
     } catch (error) {
         if (error.code === 11000) {
             // Duplicate key violation
+            console.log("duplicate detected");
             return res.status(409).json({ success: false, message: "Username or email already exists" });
         }
         console.error("Error in create account:", error.message);

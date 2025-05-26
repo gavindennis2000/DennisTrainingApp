@@ -1,20 +1,18 @@
 import { React, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom'
-import { Paper, Button, Stack } from '@mui/material';
+import { Box, Paper, Button, Stack } from '@mui/material';
 
 const buttonWidth = "180px", buttonHeight = "50px";
 const buttonCurrentPageColor = '#b3e7ff';
 
 
 
-const Navbar = ({user, setUser, currentPage, setCurrentPage}) => {
+const Navbar = ({user, setUser}) => {
 
   const navigate = useNavigate();
   const location = useLocation();
-  console.log(location.pathname);
 
   const handleClick = (path) => {
-    console.log(path)
     if (path === "/logout") {
       // log out the user
       setUser({
@@ -24,11 +22,9 @@ const Navbar = ({user, setUser, currentPage, setCurrentPage}) => {
         lastName: "",
         email: "",
       });
-      setCurrentPage("/");
       navigate('/');
       return;
     }
-    setCurrentPage(path);
   }
 
   return (
@@ -51,34 +47,35 @@ const Navbar = ({user, setUser, currentPage, setCurrentPage}) => {
         <Paper square sx={{
           backgroundColor: '#e6f7ff',
         }}>
+          <Box display="flex" justifyContent="center" alignItems="center">
           <Stack direction="row" spacing={2}>
             <Button component={Link} to="/" onClick={() => { handleClick("/") }} sx={{
               width: buttonWidth,
               height: buttonHeight,
-              backgroundColor: currentPage == "/" ? buttonCurrentPageColor : "transparent",
+              backgroundColor: location.pathname == "/" ? buttonCurrentPageColor : "transparent",
               borderRadius: '0',
             }}>Home</Button>
             {/* navbar buttons when user is logged in */}
             {user.loggedIn ? (
               <>
+                <Button component={Link} to="/feed" onClick={() => { handleClick("/feed") }} sx={{
+                  width: buttonWidth,
+                  height: buttonHeight,
+                  backgroundColor: location.pathname == "/feed" ? buttonCurrentPageColor : "transparent",
+                  borderRadius: '0',
+                }}>Feed</Button>
                 <Button component={Link} to="/account" onClick={() => { handleClick("/account") }} sx={{
                   width: buttonWidth,
                   height: buttonHeight,
-                  backgroundColor: currentPage == "/account" ? buttonCurrentPageColor : "transparent",
+                  backgroundColor: location.pathname == "/account" ? buttonCurrentPageColor : "transparent",
                   borderRadius: '0',
                 }}>Account</Button>
                 <Button component={Link} to="/" onClick={() => { handleClick("/logout") }} sx={{
                   width: buttonWidth,
                   height: buttonHeight,
-                  backgroundColor: currentPage == "/logout" ? buttonCurrentPageColor : "transparent",
+                  backgroundColor: location.pathname == "/logout" ? buttonCurrentPageColor : "transparent",
                   borderRadius: '0',
                 }}>Logout</Button>
-                <Button component={Link} to="/about" onClick={() => { handleClick("/about") }} sx={{
-                  width: buttonWidth,
-                  height: buttonHeight,
-                  backgroundColor: currentPage == "/about" ? buttonCurrentPageColor : "transparent",
-                  borderRadius: '0',
-                }}>About</Button>
                 </>
               ) : (
               <>
@@ -86,24 +83,25 @@ const Navbar = ({user, setUser, currentPage, setCurrentPage}) => {
                 <Button component={Link} to="/login" onClick={() => { handleClick("/login") }} sx={{
                   width: buttonWidth,
                   height: buttonHeight,
-                  backgroundColor: currentPage == "/login" ? buttonCurrentPageColor : "transparent",
+                  backgroundColor: location.pathname == "/login" ? buttonCurrentPageColor : "transparent",
                   borderRadius: '0',
                 }}>Log in</Button>
                 <Button component={Link} to="/register" onClick={() => { handleClick("/register") }} sx={{
                   width: buttonWidth,
                   height: buttonHeight,
-                  backgroundColor: currentPage == "/register" ? buttonCurrentPageColor : "transparent",
+                  backgroundColor: location.pathname == "/register" ? buttonCurrentPageColor : "transparent",
                   borderRadius: '0',
                 }}>Create Account</Button>
                 <Button component={Link} to="/about" onClick={() => { handleClick("/about") }} sx={{
                   width: buttonWidth,
                   height: buttonHeight,
-                  backgroundColor: currentPage == "/about" ? buttonCurrentPageColor : "transparent",
+                  backgroundColor: location.pathname == "/about" ? buttonCurrentPageColor : "transparent",
                   borderRadius: '0',
                 }}>About</Button>
                 </>
             )}
           </Stack>
+          </Box>
         </Paper>
         <Paper square sx={{
           backgroundColor: '#b3e7ff',

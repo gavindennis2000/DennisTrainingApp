@@ -4,7 +4,14 @@ import CloseIcon from '@mui/icons-material/Close'
 import { useAccountStore } from '../store/account';
 import { useNavigate } from 'react-router-dom';
 
-const Register = ({user, setUser, setCurrentPage}) => {
+const Register = ({user, setUser}) => {
+  // make sure logged in users can't be on this page
+  const navigate = useNavigate();
+  useEffect(() => {
+    if (user.loggedIn) 
+      navigate('/');
+  }, [user.loggedIn]);
+
   const initialAccount = {
     username: '',
     password: '',
@@ -81,7 +88,7 @@ const Register = ({user, setUser, setCurrentPage}) => {
         setNewAccount(initialAccount);
         setError({...newError});
         break;
-      case "can't create":
+      case "duplicate":
         setNotification("The username or email address is already in use.")
         setError({...newError});
         break;
@@ -113,16 +120,6 @@ const Register = ({user, setUser, setCurrentPage}) => {
       </IconButton>
     </React.Fragment>
   );
-
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    if (!user.loggedIn) 
-      return;
-    navigate('/');
-    setCurrentPage('/');
-  }, [user]);
-
 
   return (
     <div style={{
@@ -188,6 +185,7 @@ const Register = ({user, setUser, setCurrentPage}) => {
             autoHideDuration={5000}
             onClose={handleClose}
             action={action}
+            anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
           >
             <Alert
               onClose={handleClose}
