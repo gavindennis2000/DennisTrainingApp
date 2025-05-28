@@ -1,17 +1,176 @@
-import { Button, Paper } from '@mui/material'
+import { Button, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Tooltip } from '@mui/material'
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import React, { useState } from 'react'
+import { Add, Delete, Star, StarBorder } from '@mui/icons-material';
+import React, { useState, useEffect } from 'react'
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import dayjs from 'dayjs';
 
 const Home = ({user}) => {
-  var date = new Date();
-  const currentDay = {
-    year: date.getFullYear(),
-    month: date.getMonth() + 1, // add 1 to make it 1-based (Jan = 1)
-    day: date.getDate(),
+  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+
+  const [date, setDate] = useState(dayjs());
+  const [dateIsToday, setDateIsToday] = useState(true);
+
+  const [disabled, setDisabled] = useState(true);
+
+  const [workouts, setWorkouts] = useState([
+    {
+      exercise: "Bench Press",
+      sets: [
+        { id: `${Date.now() + Math.random()}`, weight: 135, reps: 10, pr: false},
+        { id: `${Date.now() + Math.random()}`, weight: 135, reps: 8,  pr: false},
+        { id: `${Date.now() + Math.random()}`, weight: 135, reps: 7,  pr: false},
+      ]
+    },
+    {
+      exercise: "Squat",
+      sets: [
+        { id: `${Date.now() + Math.random()}`, weight: 225, reps: 10,  pr: false},
+        { id: `${Date.now() + Math.random()}`, weight: 225, reps: 9,  pr: false},
+      ]
+    },
+    {
+      exercise: "Deadlift",
+      sets: [
+        { id: `${Date.now() + Math.random()}`, weight: 315, reps: 5,  pr: true},
+      ]
+    }
+  ]);
+
+  useEffect( () => {
+    if (date.date() === dayjs().date()) {
+      setDateIsToday(true);
+    }
+    else {
+      setDateIsToday(false);
+    }
+  }, [date])
+
+  // useEffect( () => {
+  //   console.log("workouts has changed", workouts);
+  // }, [workouts]);
+
+  const gotoPreviousDay = () => {
+    const newDate = date.subtract(1, 'day');
+    setDate(newDate);
+    return;
+  }
+
+  const gotoNextDay = () => {
+    const newDate = date.add(1, 'day');
+    setDate(newDate);
+    return;
+  }
+
+  // table functions and color stuff
+  const tableHeaderColor = "#b3e7ff";
+  const tableCellColor = ["#f0faff", "#e6f7ff"];
+
+  const handleAddSet = (exerciseIndex) => {
+    // adds set to an exercise
+    const newWorkouts = [...workouts];
+    // use the same weight for the added set
+    const weight = newWorkouts[exerciseIndex].sets[newWorkouts[exerciseIndex].sets.length - 1].weight;
+
+    const updatedExercise = {
+      ...newWorkouts[exerciseIndex],
+      sets: [...newWorkouts[exerciseIndex].sets, { id: `${Date.now() + Math.random()}`, weight: weight, reps: "0", pr: false }]
+    };
+
+    newWorkouts[exerciseIndex] = updatedExercise;
+
+    setWorkouts(newWorkouts);
   };
-  const [day, setDay] = useState(currentDay);
-  console.log("currentDay:", currentDay, "day:", day);
+
+  const handleAddExercise = () => {
+    // adds exercise to end of workout array
+
+    const newExercise = {
+      exercise: "New Exercise",
+      sets: [
+        {id: `${Date.now() + Math.random()}`, weight: "0", reps: "0", pr: false}
+      ]
+    }   
+    const newWorkouts = [...workouts, newExercise];
+    console.log(newWorkouts);
+  
+    setWorkouts(newWorkouts);
+  };
+
+  const handleDeleteSet = (exerciseIndex, setIndex) => {
+    // adds set to an exercise
+    const newWorkouts = [...workouts];
+
+    const currentSets = [...newWorkouts[exerciseIndex].sets];
+    const updatedSets = [...currentSets.slice(0, setIndex), ...currentSets.slice(setIndex + 1)];
+
+    if (updatedSets.length === 0) {
+      const updatedWorkouts = [
+        ...newWorkouts.slice(0, exerciseIndex), 
+        ...newWorkouts.slice(exerciseIndex + 1)
+      ];
+      setWorkouts(updatedWorkouts);
+    }
+    else {
+      newWorkouts[exerciseIndex] = {
+        ...newWorkouts[exerciseIndex],
+        sets: updatedSets
+      };
+      setWorkouts(newWorkouts);
+    }
+  };
+
+  const handlePR = (exerciseIndex, setIndex) => {
+    // marks a set as a personal record
+    const newWorkouts = [...workouts];
+
+    const currentSets = newWorkouts[exerciseIndex].sets;
+
+    const updatedSet = {
+      ...currentSets[setIndex],
+      pr: !currentSets[setIndex].pr
+    };
+
+    const updatedSets = [...currentSets];
+    updatedSets[setIndex] = updatedSet;
+
+    const updatedExercise = {
+      ...newWorkouts[exerciseIndex],
+      sets: updatedSets,
+    };
+
+    newWorkouts[exerciseIndex] = updatedExercise;
+
+    // Update the state
+    setWorkouts(newWorkouts);
+  }
+
+  const handleChange = (field, exerciseIndex, setIndex, value) => {
+    // changes value of workouts array when textfield is modified
+
+    const newWorkouts = [...workouts];
+
+    switch (field) {
+      case "weight":
+        newWorkouts[exerciseIndex].sets[setIndex] = {...newWorkouts[exerciseIndex].sets[setIndex], weight: value};
+        break;
+      case "reps":
+        newWorkouts[exerciseIndex].sets[setIndex] = {...newWorkouts[exerciseIndex].sets[setIndex], reps: value};
+        break;
+      case "exercise":
+        newWorkouts[exerciseIndex] = {...newWorkouts[exerciseIndex], exercise: value}
+        break;
+      default:
+        console.log("something went wrong");
+        break;
+    }
+
+    setWorkouts(newWorkouts);
+    console.log("workout change:", workouts);
+  }
 
   return (
     <div style={{
@@ -27,13 +186,142 @@ const Home = ({user}) => {
       ) : ( /* if user is logged in, show the training log */
         <>
           <h2>Welcome, {user.firstName ? user.firstName : "TestUser"} !</h2>
-          <Button>
-            <ArrowBackIcon />
-          </Button>
-          {day === currentDay ? "Today" : `${day.month}-${day.day}-${day.year}` }
-          <Button>
-            <ArrowForwardIcon />
-          </Button>
+          <br />
+          <h3>My Training Log</h3>
+          {/* the date */}
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <div style={{ display: 'flex', justifyContent: 'center', gap: '8px' }}>
+              <Button onClick={() => { gotoPreviousDay() }}>
+                <ArrowBackIcon />
+              </Button>
+                <DatePicker 
+                  disableFuture 
+                  label={(dateIsToday) ? `Today` : `${date.format('dddd')}, ${months[date.month()]} ${date.date()}` } 
+                  onChange={(newValue) => {
+                    if (newValue) {
+                      setDate(newValue);
+                    }
+                  }}
+                />
+              <Button onClick={!dateIsToday ? () => { gotoNextDay() } : () => {}}>
+                <ArrowForwardIcon sx={dateIsToday ? {color: "gray"} : {}}/>
+              </Button>
+            </div>
+          </LocalizationProvider>
+
+          {/* the table for user's workout */}
+          <TableContainer component={Paper} sx={{marginTop: '20px', marginBottom: '40px', marginRight: '0px'}}>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell sx={{backgroundColor: tableHeaderColor}}><div style={{marginLeft: '14px'}}>Exercise</div></TableCell>
+                  <TableCell sx={{textAlign: 'center', backgroundColor: tableHeaderColor}}>Set</TableCell>
+                  <TableCell sx={{textAlign: 'center', backgroundColor: tableHeaderColor}}>Weight</TableCell>
+                  <TableCell sx={{textAlign: 'center', backgroundColor: tableHeaderColor}}>Reps</TableCell>
+                  <TableCell sx={{textAlign: 'center', backgroundColor: tableHeaderColor}}>Actions</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+              {workouts.map((exercise, exerciseIndex) => (
+                <React.Fragment key={exerciseIndex}>
+                  {exercise.sets.map((set, setIndex) => (
+                    <TableRow key={`${set.id}`}>
+                      <TableCell sx={{backgroundColor: tableCellColor[exerciseIndex % 2]}}>
+                        
+                        {setIndex === 0 ? 
+                          <TextField 
+                            defaultValue={exercise.exercise}
+                            onChange={(e) => handleChange("exercise", exerciseIndex, setIndex, e.target.value)}
+                            sx={{
+                              width: '200px',
+                              '& .MuiOutlinedInput-root': {
+                                '& fieldset': {
+                                  borderColor: 'transparent', // removes outline
+                                },
+                              }
+                            }}
+                          /> : ''
+                        }
+                      </TableCell>
+                      <TableCell sx={{textAlign: 'center', backgroundColor: tableCellColor[exerciseIndex % 2]}}>
+                          {setIndex + 1}
+                      </TableCell>
+                      <TableCell sx={{textAlign: 'center', backgroundColor: tableCellColor[exerciseIndex % 2]}}>
+                        <TextField 
+                          defaultValue={set.weight}
+                          onChange={(e) => handleChange("weight", exerciseIndex, setIndex, e.target.value)}
+                          sx={{
+                            width: '100px',
+                            '& .MuiInputBase-input': {
+                            textAlign: 'center', // can be 'left', 'right', or 'center'
+                            },
+                            '& .MuiOutlinedInput-root': {
+                              '& fieldset': {
+                                borderColor: 'transparent', // removes outline
+                              },
+                            }}
+                          }
+                        />
+                      </TableCell>
+                      <TableCell sx={{textAlign: 'center', backgroundColor: tableCellColor[exerciseIndex % 2]}}>
+                        <TextField 
+                          defaultValue={set.reps}
+                          onChange={(e) => handleChange("reps", exerciseIndex, setIndex, e.target.value)}
+                          sx={{
+                            width: '100px',
+                            '& .MuiInputBase-input': {
+                            textAlign: 'center', // can be 'left', 'right', or 'center'
+                            },
+                            '& .MuiOutlinedInput-root': {
+                              '& fieldset': {
+                                borderColor: 'transparent', // removes outline
+                              },
+                            }}}
+                        />
+                      </TableCell>
+                      <TableCell sx={{textAlign: 'center', backgroundColor: tableCellColor[exerciseIndex % 2]}}>
+                        <Tooltip title="Add to personal records">
+                          <Button 
+                            sx={{marginLeft: '10px', marginRight: '10px'}}
+                            onClick={() => handlePR(exerciseIndex, setIndex)}
+                          >
+                            {workouts[exerciseIndex].sets[setIndex].pr ? <Star /> : <StarBorder />}
+                          </Button>
+                        </Tooltip>
+                        <Tooltip title="Delete set">
+                          <Button 
+                            sx={{marginLeft: '10px', marginRight: '10px'}}
+                            onClick={() => handleDeleteSet(exerciseIndex, setIndex)}
+                          >
+                            <Delete />
+                          </Button>
+                        </Tooltip>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                  <TableRow key={"Add set"}>
+                    <TableCell sx={{backgroundColor: tableCellColor[exerciseIndex % 2]}}>
+                      <Button onClick={() => handleAddSet(exerciseIndex)}>
+                        <Add /> Add Set
+                      </Button>
+                    </TableCell>
+                    <TableCell sx={{backgroundColor: tableCellColor[exerciseIndex % 2]}} />
+                    <TableCell sx={{backgroundColor: tableCellColor[exerciseIndex % 2]}} />
+                    <TableCell sx={{backgroundColor: tableCellColor[exerciseIndex % 2]}} />
+                    <TableCell sx={{backgroundColor: tableCellColor[exerciseIndex % 2]}} />
+                  </TableRow>
+                </React.Fragment>
+              ))}
+              <TableRow key={"New exercise"}>
+                <TableCell>
+                  <Button onClick={() => handleAddExercise()}>
+                    <Add /> Add Exercise
+                  </Button>
+                </TableCell>
+              </TableRow>
+            </TableBody>
+            </Table>
+          </TableContainer>
         </>
       )}
       

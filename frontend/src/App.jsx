@@ -85,8 +85,8 @@ function App() {
       <CssBaseline />
       <div>
         <div style={{
-          marginLeft: '150px',
-          marginRight: '150px',
+          marginLeft: '50px',
+          marginRight: '50px',
           marginTop: '0px',
           marginBottom: '10px',
         }}>

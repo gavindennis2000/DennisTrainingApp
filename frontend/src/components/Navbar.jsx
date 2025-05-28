@@ -54,7 +54,7 @@ const Navbar = ({user, setUser}) => {
               height: buttonHeight,
               backgroundColor: location.pathname == "/" ? buttonCurrentPageColor : "transparent",
               borderRadius: '0',
-            }}>Home</Button>
+            }}>{user.loggedIn? "Training Log" : "Home" }</Button>
             {/* navbar buttons when user is logged in */}
             {user.loggedIn ? (
               <>
@@ -80,6 +80,12 @@ const Navbar = ({user, setUser}) => {
               ) : (
               <>
                 {/* navbar buttons when user is not logged in */}
+                <Button component={Link} to="/about" onClick={() => { handleClick("/about") }} sx={{
+                  width: buttonWidth,
+                  height: buttonHeight,
+                  backgroundColor: location.pathname == "/about" ? buttonCurrentPageColor : "transparent",
+                  borderRadius: '0',
+                }}>About</Button>
                 <Button component={Link} to="/login" onClick={() => { handleClick("/login") }} sx={{
                   width: buttonWidth,
                   height: buttonHeight,
@@ -92,12 +98,6 @@ const Navbar = ({user, setUser}) => {
                   backgroundColor: location.pathname == "/register" ? buttonCurrentPageColor : "transparent",
                   borderRadius: '0',
                 }}>Create Account</Button>
-                <Button component={Link} to="/about" onClick={() => { handleClick("/about") }} sx={{
-                  width: buttonWidth,
-                  height: buttonHeight,
-                  backgroundColor: location.pathname == "/about" ? buttonCurrentPageColor : "transparent",
-                  borderRadius: '0',
-                }}>About</Button>
                 </>
             )}
           </Stack>

@@ -14,10 +14,8 @@ app.post("/api/login", async (req, res) => {
     const { usernameOrEmail, password } = req.body;
 
     if (!usernameOrEmail || !password) {
-            console.log("here i am")
             return res.status(400).json({message: 'Missing username or password'});
         }
-    console.log("user:", usernameOrEmail, "pass:", password)
 
     try {
         const user = await Account.findOne({
