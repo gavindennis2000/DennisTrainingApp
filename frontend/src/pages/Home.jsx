@@ -1,7 +1,5 @@
 import { Button, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Tooltip } from '@mui/material'
-import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import { Add, Delete, Star, StarBorder } from '@mui/icons-material';
+import { Add, ArrowBack, ArrowForward, Delete, DeleteOutline, FileCopyOutlined, SaveAs, Star, StarBorder } from '@mui/icons-material';
 import React, { useState, useEffect } from 'react'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -40,6 +38,15 @@ const Home = ({user}) => {
     }
   ]);
 
+  const [allWorkouts, setAllWorkouts] = useState([
+    {
+      name: "My Workout",
+      id: `My Workout-${Date.now()}-${Math.random()}`,
+      date: Date.now(),
+      workout: workouts,
+    }
+  ])
+
   useEffect( () => {
     if (date.date() === dayjs().date()) {
       setDateIsToday(true);
@@ -66,6 +73,7 @@ const Home = ({user}) => {
   }
 
   // table functions and color stuff
+  const tableTitleColor = "#99dfff";
   const tableHeaderColor = "#b3e7ff";
   const tableCellColor = ["#f0faff", "#e6f7ff"];
 
@@ -122,6 +130,13 @@ const Home = ({user}) => {
       setWorkouts(newWorkouts);
     }
   };
+
+  const handleDeleteAll = () => {
+    // deletes all exercises for current day
+
+    // const newWorkouts = [...workouts];
+    setWorkouts([]);
+  }
 
   const handlePR = (exerciseIndex, setIndex) => {
     // marks a set as a personal record
@@ -192,7 +207,7 @@ const Home = ({user}) => {
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <div style={{ display: 'flex', justifyContent: 'center', gap: '8px' }}>
               <Button onClick={() => { gotoPreviousDay() }}>
-                <ArrowBackIcon />
+                <ArrowBack/>
               </Button>
                 <DatePicker 
                   disableFuture 
@@ -203,8 +218,8 @@ const Home = ({user}) => {
                     }
                   }}
                 />
-              <Button onClick={!dateIsToday ? () => { gotoNextDay() } : () => {}}>
-                <ArrowForwardIcon sx={dateIsToday ? {color: "gray"} : {}}/>
+              <Button onClick={!dateIsToday && (() => gotoNextDay() )}>
+                <ArrowForward sx={dateIsToday ? {color: "gray"} : {}}/>
               </Button>
             </div>
           </LocalizationProvider>
@@ -213,6 +228,50 @@ const Home = ({user}) => {
           <TableContainer component={Paper} sx={{marginTop: '20px', marginBottom: '40px', marginRight: '0px'}}>
             <Table>
               <TableHead>
+                <TableRow>
+                  <TableCell sx={{backgroundColor: tableTitleColor}}>
+                    <TextField 
+                      defaultValue={"Upper Body Workout A"}
+                      onChange={(e) => handleChange("name", -1, -1, e.target.value)}
+                      sx={{
+                        width: '250px',
+                        '& .MuiOutlinedInput-root': {
+                          '& fieldset': {
+                            borderColor: 'transparent', // removes outline
+                          },
+                        },
+                        '& .MuiInputBase-input': {
+                          fontWeight: 700, // bold input text
+                          height: '10px'
+                        }
+                      }}
+                    />
+                  </TableCell>
+                  
+                  <TableCell sx={{textAlign: 'center', backgroundColor: tableTitleColor}} />
+                  <TableCell sx={{textAlign: 'center', backgroundColor: tableTitleColor}} />
+                  <TableCell sx={{textAlign: 'center', backgroundColor: tableTitleColor}} />
+                  <TableCell sx={{textAlign: 'center', backgroundColor: tableTitleColor}}>
+                    <Tooltip title="Save as template">
+                      <Button sx={{marginRight: '10px'}} onClick={() => ""}>
+                        <SaveAs fontSize='large'/>
+                      </Button>
+                    </Tooltip>
+                    { !dateIsToday && (
+                      <Tooltip title="Copy workout to today">
+                      <Button sx={{marginLeft: '10px', marginRight: '10px'}} onClick={() => ""}>
+                        <FileCopyOutlined fontSize='large'/>
+                      </Button>
+                    </Tooltip>
+                    )}
+                    
+                    <Tooltip title="Delete all exercises for current day">
+                      <Button sx={{marginLeft: '10px'}} onClick={() => handleDeleteAll() }>
+                        <DeleteOutline fontSize='large'/>
+                      </Button>
+                    </Tooltip>
+                  </TableCell>
+                </TableRow>
                 <TableRow>
                   <TableCell sx={{backgroundColor: tableHeaderColor}}><div style={{marginLeft: '14px'}}>Exercise</div></TableCell>
                   <TableCell sx={{textAlign: 'center', backgroundColor: tableHeaderColor}}>Set</TableCell>
@@ -280,7 +339,7 @@ const Home = ({user}) => {
                         />
                       </TableCell>
                       <TableCell sx={{textAlign: 'center', backgroundColor: tableCellColor[exerciseIndex % 2]}}>
-                        <Tooltip title="Add to personal records">
+                        <Tooltip title="Add set to personal bests">
                           <Button 
                             sx={{marginLeft: '10px', marginRight: '10px'}}
                             onClick={() => handlePR(exerciseIndex, setIndex)}
