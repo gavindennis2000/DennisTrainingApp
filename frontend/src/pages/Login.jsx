@@ -56,8 +56,7 @@ const Login = ({user, setUser}) => {
           trainingPosts: user.trainingPosts,
           profilePicture: user.profilePicture,
         });
-        setNotification("Log in successful!");
-        // alert("Log in successful!");
+        localStorage.setItem('user', user);
         break;
     }
     setOpen(true);

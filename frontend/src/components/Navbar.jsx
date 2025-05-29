@@ -22,6 +22,7 @@ const Navbar = ({user, setUser}) => {
         lastName: "",
         email: "",
       });
+      localStorage.removeItem("user");
       navigate('/');
       return;
     }

@@ -32,6 +32,24 @@ function App() {
   const previousLogin = useRef(user.loggedIn);
 
   useEffect(() => {
+    // get user from local storage on first load
+
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+      setUser({
+        loggedIn: true,
+        username: user.username,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        accountCreated: user.accountCreated,
+        trainingPosts: user.trainingPosts,
+        profilePicture: user.profilePicture,
+      });
+    }
+  }, [])
+
+  useEffect(() => {
     if (user.loggedIn !== previousLogin.current) {
       // don't show an alert the first run
       previousLogin.current = user.loggedIn;

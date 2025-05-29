@@ -180,7 +180,7 @@ const Home = ({user}) => {
       marginRight: '20px',
       paddingTop: '5px'
     }}>
-      {user.loggedIn ? /* if user isn't logged in, just show a welcome */ (
+      {!user.loggedIn ? /* if user isn't logged in, just show a welcome */ (
         <>
           <h2>Welcome to HardGains! Log in to start logging your training.</h2>
         </>
