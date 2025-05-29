@@ -1,0 +1,24 @@
+const [workouts, setWorkouts] = useState([
+    {
+      exercise: "Bench Press",
+      sets: [
+        { id: `${Date.now() + Math.random()}`, weight: 135, reps: 5, pr: false},
+        { id: `${Date.now() + Math.random()}`, weight: 135, reps: 5,  pr: false},
+        { id: `${Date.now() + Math.random()}`, weight: 135, reps: 5,  pr: false},
+      ]
+    },
+    {
+      exercise: "Squat",
+      sets: [
+        { id: `${Date.now() + Math.random()}`, weight: 225, reps: 5,  pr: false},
+        { id: `${Date.now() + Math.random()}`, weight: 225, reps: 5,  pr: false},
+        { id: `${Date.now() + Math.random()}`, weight: 225, reps: 5,  pr: false},
+      ]
+    },
+    {
+      exercise: "Deadlift",
+      sets: [
+        { id: `${Date.now() + Math.random()}`, weight: 315, reps: 5,  pr: true},
+      ]
+    }
+  ]);

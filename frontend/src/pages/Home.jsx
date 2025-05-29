@@ -18,24 +18,10 @@ const Home = ({user}) => {
     {
       exercise: "Bench Press",
       sets: [
-        { id: `${Date.now() + Math.random()}`, weight: 135, reps: 10, pr: false},
-        { id: `${Date.now() + Math.random()}`, weight: 135, reps: 8,  pr: false},
-        { id: `${Date.now() + Math.random()}`, weight: 135, reps: 7,  pr: false},
+        { id: `${Date.now() + Math.random()}`, weight: 135, reps: 5, pr: false},
+        { id: `${Date.now() + Math.random()}`, weight: 135, reps: 5,  pr: false},
       ]
     },
-    {
-      exercise: "Squat",
-      sets: [
-        { id: `${Date.now() + Math.random()}`, weight: 225, reps: 10,  pr: false},
-        { id: `${Date.now() + Math.random()}`, weight: 225, reps: 9,  pr: false},
-      ]
-    },
-    {
-      exercise: "Deadlift",
-      sets: [
-        { id: `${Date.now() + Math.random()}`, weight: 315, reps: 5,  pr: true},
-      ]
-    }
   ]);
 
   const [allWorkouts, setAllWorkouts] = useState([
@@ -252,11 +238,6 @@ const Home = ({user}) => {
                   <TableCell sx={{textAlign: 'center', backgroundColor: tableTitleColor}} />
                   <TableCell sx={{textAlign: 'center', backgroundColor: tableTitleColor}} />
                   <TableCell sx={{textAlign: 'center', backgroundColor: tableTitleColor}}>
-                    <Tooltip title="Save as template">
-                      <Button sx={{marginRight: '10px'}} onClick={() => ""}>
-                        <SaveAs fontSize='large'/>
-                      </Button>
-                    </Tooltip>
                     { !dateIsToday && (
                       <Tooltip title="Copy workout to today">
                       <Button sx={{marginLeft: '10px', marginRight: '10px'}} onClick={() => ""}>
@@ -264,9 +245,13 @@ const Home = ({user}) => {
                       </Button>
                     </Tooltip>
                     )}
-                    
+                    <Tooltip title="Save as template">
+                      <Button sx={{marginLeft: '10px', marginRight: '10px'}} onClick={() => ""}>
+                        <SaveAs fontSize='large'/>
+                      </Button>
+                    </Tooltip>
                     <Tooltip title="Delete all exercises for current day">
-                      <Button sx={{marginLeft: '10px'}} onClick={() => handleDeleteAll() }>
+                      <Button sx={{marginLeft: '10px', marginRight: '10px'}} onClick={() => handleDeleteAll() }>
                         <DeleteOutline fontSize='large'/>
                       </Button>
                     </Tooltip>
