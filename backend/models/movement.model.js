@@ -9,8 +9,12 @@ const movementSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    categoryAlt: {
+        type: String,
+        default: ""
+    }
 });
 
-const Movement = mongoose.model('Movement', movementTemplateSchema);
+const Movement = mongoose.model('Movement', movementSchema);
 
 export default Movement;

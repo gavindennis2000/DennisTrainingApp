@@ -14,12 +14,11 @@ const workoutSchema = new mongoose.Schema({
     },
     date: {
         type: Object,
-        required: true,
         default: simpleDate,
     },
     bodyweight: {
         type: String,
-        required: false,
+        default: ""
     },
 });
 

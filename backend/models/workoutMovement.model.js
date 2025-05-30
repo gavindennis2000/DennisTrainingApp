@@ -7,7 +7,7 @@ const workoutMovementSchema = new mongoose.Schema({
     },
     movementID: {
         type: String,
-        required: true,
+        default: ""
     },
     order: {
         type: String,

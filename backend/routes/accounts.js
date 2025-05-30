@@ -68,12 +68,7 @@ accountsRouter.post("/register", async (req, res) => {
         await newAccount.save();
         res.status(201).json({ success: true, data: newAccount });
     } catch (error) {
-        if (error.code === 11000) {
-            // Duplicate key violation
-            console.log("duplicate detected");
-            return res.status(409).json({ success: false, message: "Username or email already exists" });
-        }
-        console.error("Error in create account:", error.message);
+        console.error("Error creating workout:", error.message);
         res.status(500).json({ success: false, message: "can't create" });
     }
 });
