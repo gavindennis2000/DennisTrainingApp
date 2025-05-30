@@ -11,8 +11,6 @@ const workoutSchema = new mongoose.Schema({
     userID: {
         type: String,
         required: true,
-        trim: true,
-        lowercase: true
     },
     date: {
         type: Object,
@@ -21,10 +19,8 @@ const workoutSchema = new mongoose.Schema({
     },
     bodyweight: {
         type: String,
-        required: true,
+        required: false,
     },
-}, {
-    timestamps: true
 });
 
 const Workout = mongoose.model('Workout', workoutSchema);

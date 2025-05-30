@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation, Route, Routes } from 'react-router-dom';
-import { About, Account, Feed, Home, Login, NotFound, Register, ResetPassword } from './pages';
+import { About, Account, Feed, Home, Login, NotFound, Register, ResetPassword, TrainingLog } from './pages';
 import { Navbar, Footer } from './components';
 import { Alert, createTheme, CssBaseline, IconButton, Snackbar, Paper } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close'
@@ -116,7 +116,7 @@ function App() {
               backgroundColor: 'rgba(245, 252, 255, 0.9)',
           }}>
             <Routes>
-              <Route path="/" element={<Home user={user} />} />
+              <Route path="/" element={!user.loggedIn ? <Home user={user} /> : <TrainingLog user={user} />} />
               <Route path="/About" element={<About />} />
               <Route path="/Account" element={ <Account user={user} setUser={setUser} /> } />
               <Route path="/Feed" element={<Feed user={user} />} />
