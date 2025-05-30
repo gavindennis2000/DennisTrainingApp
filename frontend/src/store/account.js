@@ -27,7 +27,7 @@ export const useAccountStore = create((set) => ({
         // copy account info but leave out the repeat password
         const { repeatPassword, ...accountData } = newAccount;
         
-        const res = await fetch("/api/accounts", {
+        const res = await fetch("/api/accounts/register", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -46,7 +46,7 @@ export const useAccountStore = create((set) => ({
     },
     loginAccount: async ({usernameOrEmail, password}) => {
         try {
-            const res = await fetch('/api/login', {
+            const res = await fetch('/api/accounts/login', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({usernameOrEmail, password})

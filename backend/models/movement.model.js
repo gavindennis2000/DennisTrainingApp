@@ -1,20 +1,16 @@
 import mongoose from "mongoose";
 
 const movementSchema = new mongoose.Schema({
-    workoutID: {
+    name: {
         type: String,
         required: true,
     },
-    movementID: {
-        type: String,
-        required: true,
-    },
-    order: {
+    category: {
         type: String,
         required: true,
     },
 });
 
-const Movement = mongoose.model('Movement', movementSchema);
+const Movement = mongoose.model('Movement', movementTemplateSchema);
 
 export default Movement;
