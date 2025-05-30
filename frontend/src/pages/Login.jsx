@@ -36,7 +36,6 @@ const Login = ({user, setUser}) => {
 
   const handleSubmit = async () => {
     const {success, message, user} = await loginAccount(loginUser);
-    console.log("Success", success, "Message", message, "User:", user);
 
     switch (message) {
       case "Missing username or password":
@@ -56,7 +55,8 @@ const Login = ({user, setUser}) => {
           trainingPosts: user.trainingPosts,
           profilePicture: user.profilePicture,
         });
-        localStorage.setItem('user', user);
+        localStorage.setItem('storedUser', JSON.stringify(user));
+        console.log("now stored:", JSON.parse(localStorage.getItem('storedUser')));
         break;
     }
     setOpen(true);
@@ -80,7 +80,7 @@ const Login = ({user, setUser}) => {
       <h2>Login</h2>
       <Stack spacing={2}>
         <TextField
-          id="filled-password-input"
+          id="username-or-email"
           label="Username"
           // type="password"
           autoComplete="current-password"
@@ -88,7 +88,7 @@ const Login = ({user, setUser}) => {
           onChange={(e) => setLoginUser({...loginUser, usernameOrEmail: e.target.value})}
         />
         <TextField
-          id="filled-password-input"
+          id="the-secret-code"
           label="Password"
           type="password"
           autoComplete="current-password"

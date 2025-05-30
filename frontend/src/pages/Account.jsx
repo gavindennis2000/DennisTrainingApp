@@ -13,23 +13,6 @@ const Account = ({user, setUser}) => {
         }
     }, [user.loggedIn]);
 
-    // fix the formatting of the account creation date
-    if (user.loggedIn) {
-        const date = user?.accountCreated ? new Date(user.accountCreated) : null;
-        if (date && !isNaN(date)) {
-            readableDate = date.toLocaleDateString('en-US', {
-                year: 'numeric',
-                month: 'long',   // "May"
-                day: 'numeric',
-            });
-            readableTime = date.toLocaleTimeString('en-US', {
-                hour: 'numeric',
-                minute: '2-digit',
-                hour12: true,
-            });
-        }
-    }
-    
     return (
         <div style={{
             margin: '20px', 
@@ -43,7 +26,7 @@ const Account = ({user, setUser}) => {
                 <br />
                 Name: {user.firstName} {user.lastName} 
                 <br />
-                Account Created: {readableDate}, {readableTime}
+                Account Created: {user.accountCreated.month}-{user.accountCreated.day}-{user.accountCreated.year}
             </Stack>
         </div>
     )

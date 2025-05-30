@@ -34,22 +34,24 @@ function App() {
   useEffect(() => {
     // get user from local storage on first load
 
-    const storedUser = localStorage.getItem('user');
+    const storedUser = JSON.parse(localStorage.getItem('storedUser'));
     if (storedUser) {
+      console.log("there is a stored user");
       setUser({
         loggedIn: true,
-        username: user.username,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        email: user.email,
-        accountCreated: user.accountCreated,
-        trainingPosts: user.trainingPosts,
-        profilePicture: user.profilePicture,
+        username: storedUser.username,
+        firstName: storedUser.firstName,
+        lastName: storedUser.lastName,
+        email: storedUser.email,
+        accountCreated: storedUser.accountCreated,
+        trainingPosts: storedUser.trainingPosts,
+        profilePicture: storedUser.profilePicture,
       });
     }
-  }, [])
+  }, []);
 
   useEffect(() => {
+
     if (user.loggedIn !== previousLogin.current) {
       // don't show an alert the first run
       previousLogin.current = user.loggedIn;
@@ -60,6 +62,7 @@ function App() {
       }
       setOpen(true);
     }
+    console.log(user);
   }, [user.loggedIn]);
 
 

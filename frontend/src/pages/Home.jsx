@@ -204,7 +204,7 @@ const Home = ({user}) => {
                     }
                   }}
                 />
-              <Button onClick={!dateIsToday && (() => gotoNextDay() )}>
+              <Button onClick={ () => !dateIsToday && gotoNextDay() }>
                 <ArrowForward sx={dateIsToday ? {color: "gray"} : {}}/>
               </Button>
             </div>

@@ -1,5 +1,12 @@
 import mongoose from "mongoose";
 
+const date = new Date();
+const simpleDate = {
+  year: date.getFullYear(),
+  month: date.getMonth() + 1, // JS months are 0-based
+  day: date.getDate()
+};
+
 const accountSchema = new mongoose.Schema({
     username: {
         type: String,
@@ -28,9 +35,9 @@ const accountSchema = new mongoose.Schema({
         lowercase: true
     },
     accountCreated: {
-        type: Date,
+        type: Object,
         required: true,
-        default: Date.now,
+        default: simpleDate,
     },
     trainingPosts: {
         type: Number,
