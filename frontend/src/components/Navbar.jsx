@@ -42,7 +42,7 @@ const Navbar = ({user, setUser}) => {
           paddingTop: '1px',
         }}>
           <h1 style={{marginBottom: "0px"}}>HardGains</h1>
-          <p style={{marginBottom: "30px", marginTop: '0px'}}>A Simple Training Log to Share With Friends</p>
+          <p style={{marginBottom: "30px", marginTop: '0px'}}>A Simple Training Log For Strength Workouts</p>
         </div>
 
         <Paper square sx={{
@@ -59,12 +59,12 @@ const Navbar = ({user, setUser}) => {
             {/* navbar buttons when user is logged in */}
             {user.loggedIn ? (
               <>
-                <Button component={Link} to="/feed" onClick={() => { handleClick("/feed") }} sx={{
+                <Button component={Link} to="/data" onClick={() => { handleClick("/data") }} sx={{
                   width: buttonWidth,
                   height: buttonHeight,
-                  backgroundColor: location.pathname == "/feed" ? buttonCurrentPageColor : "transparent",
+                  backgroundColor: location.pathname == "/data" ? buttonCurrentPageColor : "transparent",
                   borderRadius: '0',
-                }}>Feed</Button>
+                }}>Data</Button>
                 <Button component={Link} to="/account" onClick={() => { handleClick("/account") }} sx={{
                   width: buttonWidth,
                   height: buttonHeight,

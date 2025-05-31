@@ -1,25 +1,44 @@
 import mongoose from "mongoose";
 
-const date = new Date();
-const simpleDate = {
-  year: date.getFullYear(),
-  month: date.getMonth() + 1, // JS months are 0-based
-  day: date.getDate()
-};
+const newDate = new Date();
 
 const workoutSchema = new mongoose.Schema({
+    defaultWorkout: {
+        type: Boolean, 
+        default: false
+    },
     userID: {
         type: String,
         required: true,
     },
     date: {
-        type: Object,
-        default: simpleDate,
+        type: String,
+        default: JSON.stringify({
+            year: newDate.getFullYear(),
+            month: newDate.getMonth() + 1,
+            day: newDate.getDate()
+        })
+    },
+    name: {
+        type: String, 
+        default: "My Workout"
     },
     bodyweight: {
         type: String,
         default: ""
     },
+    exercises: [
+        {
+            name: String,
+            sets: [
+                {
+                    weight: String, 
+                    reps: String,
+                    pr: Boolean
+                }
+            ]
+        }
+    ],
 });
 
 const Workout = mongoose.model('Workout', workoutSchema);

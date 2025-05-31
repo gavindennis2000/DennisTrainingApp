@@ -36,7 +36,6 @@ function App() {
 
     const storedUser = JSON.parse(localStorage.getItem('storedUser'));
     if (storedUser) {
-      console.log("there is a stored user");
       setUser({
         loggedIn: true,
         username: storedUser.username,
@@ -62,7 +61,6 @@ function App() {
       }
       setOpen(true);
     }
-    console.log(user);
   }, [user.loggedIn]);
 
 

@@ -1,10 +1,11 @@
-import { Button, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Tooltip } from '@mui/material'
+import { Button, ListSubheader, MenuItem, Paper, Select, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Tooltip } from '@mui/material'
 import { Add, ArrowBack, ArrowForward, Delete, DeleteOutline, FileCopyOutlined, SaveAs, Star, StarBorder } from '@mui/icons-material';
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import dayjs from 'dayjs';
+import exerciseList from '../components/exerciseList';
 
 const TrainingLog = ({user}) => {
   const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
@@ -12,39 +13,76 @@ const TrainingLog = ({user}) => {
   const [date, setDate] = useState(dayjs());
   const [dateIsToday, setDateIsToday] = useState(true);
 
-  const [disabled, setDisabled] = useState(true);
+  const allExercises = exerciseList;
 
-  const [workouts, setWorkouts] = useState([
-    {
-      exercise: "Bench Press",
-      sets: [
-        { id: `${Date.now() + Math.random()}`, weight: 135, reps: 5, pr: false},
-        { id: `${Date.now() + Math.random()}`, weight: 135, reps: 5,  pr: false},
-      ]
-    },
-  ]);
+  const defaultWorkout = {
+    defaultWorkout: true,
+    userID: user.username, 
+    date: JSON.stringify({
+      year: dayjs().year(), 
+      month: dayjs().month() + 1, 
+      day: dayjs().date()
+    }),
+    name: "My Workout",
+    bodyweight: "",
+    exercises: []
+  }
+  const [workout, setWorkout] = useState({...defaultWorkout});
 
-  const [allWorkouts, setAllWorkouts] = useState([
-    {
-      name: "My Workout",
-      id: `My Workout-${Date.now()}-${Math.random()}`,
-      date: Date.now(),
-      workout: workouts,
+  const fetchWorkout = async () => {
+    const dateStr = JSON.stringify({
+      year: date.year(), 
+      month: date.month() + 1, 
+      day: date.date()
+    });
+    const response = await fetch(`/api/training/workout?userID=${user.username}&date=${dateStr}`);
+    const data = await response.json();
+
+    if (Array.isArray(data) && data.length === 0) {
+      setWorkout(defaultWorkout);
+      console.log("No workouts returned from api call. Setting to default");
+      return;
     }
-  ])
+
+    // update the workout object
+    const dataObj = data[0];
+    const newExercises = [...dataObj.exercises];
+    setWorkout({
+      defaultWorkout: false,
+      userID: user.username, 
+      date: JSON.parse(dataObj.date),
+      name: dataObj.name, 
+      bodyweight: dataObj.bodyweight, 
+      exercises: newExercises
+    });
+    console.log("found workout from ", dataObj.date);
+  }
+
+  const isFirstRender = useRef(true);
 
   useEffect( () => {
-    if (date.date() === dayjs().date()) {
+    if (date.date() === dayjs().date() && date.month() === dayjs().month() && date.year() === dayjs().year()) {
       setDateIsToday(true);
     }
     else {
       setDateIsToday(false);
     }
+
+    // fetch the workout for the date
+    if (isFirstRender.current) {
+      // skip fetch on first render
+      isFirstRender.current = false;
+      return;
+    }
+    fetchWorkout();
   }, [date])
 
-  // useEffect( () => {
-  //   console.log("workouts has changed", workouts);
-  // }, [workouts]);
+  useEffect( () => {
+    if (workout.defaultWorkout)
+      return;
+
+    console.log("Workout has changed: ", workout);
+  }, [workout]);
 
   const gotoPreviousDay = () => {
     const newDate = date.subtract(1, 'day');
@@ -65,112 +103,116 @@ const TrainingLog = ({user}) => {
 
   const handleAddSet = (exerciseIndex) => {
     // adds set to an exercise
-    const newWorkouts = [...workouts];
+    console.log("Adding set");
+    const newWorkout = {...workout};
     // use the same weight for the added set
-    const weight = newWorkouts[exerciseIndex].sets[newWorkouts[exerciseIndex].sets.length - 1].weight;
+    const weight = newWorkout.exercises[exerciseIndex].sets[newWorkout.exercises[exerciseIndex].sets.length - 1].weight;
 
     const updatedExercise = {
-      ...newWorkouts[exerciseIndex],
-      sets: [...newWorkouts[exerciseIndex].sets, { id: `${Date.now() + Math.random()}`, weight: weight, reps: "0", pr: false }]
+      ...newWorkout.exercises[exerciseIndex],
+      sets: [...newWorkout.exercises[exerciseIndex].sets, { weight: weight, reps: "0", pr: false }]
     };
 
-    newWorkouts[exerciseIndex] = updatedExercise;
+    newWorkout.exercises[exerciseIndex] = updatedExercise;
 
-    setWorkouts(newWorkouts);
+    setWorkout(newWorkout);
   };
 
   const handleAddExercise = () => {
     // adds exercise to end of workout array
 
     const newExercise = {
-      exercise: "New Exercise",
+      name: "New Exercise",
       sets: [
-        {id: `${Date.now() + Math.random()}`, weight: "0", reps: "0", pr: false}
+        { weight: "0", reps: "0", pr: false }
       ]
-    }   
-    const newWorkouts = [...workouts, newExercise];
-    console.log(newWorkouts);
+    };
+
+    const newExercises = [...workout.exercises, newExercise];
+
+    const newWorkout = {...workout, exercises: newExercises};
+   
+    console.log(newWorkout);
   
-    setWorkouts(newWorkouts);
+    setWorkout(newWorkout);
   };
 
   const handleDeleteSet = (exerciseIndex, setIndex) => {
     // adds set to an exercise
-    const newWorkouts = [...workouts];
+    const newWorkout = {...workout};
 
-    const currentSets = [...newWorkouts[exerciseIndex].sets];
+    const currentSets = [...newWorkout.exercises[exerciseIndex].sets];
     const updatedSets = [...currentSets.slice(0, setIndex), ...currentSets.slice(setIndex + 1)];
 
     if (updatedSets.length === 0) {
-      const updatedWorkouts = [
-        ...newWorkouts.slice(0, exerciseIndex), 
-        ...newWorkouts.slice(exerciseIndex + 1)
-      ];
-      setWorkouts(updatedWorkouts);
+      newWorkout.exercises.splice(exerciseIndex, 1);
+      setWorkout(newWorkout);
     }
     else {
-      newWorkouts[exerciseIndex] = {
-        ...newWorkouts[exerciseIndex],
+      newWorkout.exercises[exerciseIndex] = {
+        ...newWorkout[exerciseIndex],
         sets: updatedSets
       };
-      setWorkouts(newWorkouts);
+      setWorkout(newWorkout);
     }
   };
 
-  const handleDeleteAll = () => {
-    // deletes all exercises for current day
+  // const handleDeleteAll = () => {
+  //   // deletes all exercises for current day
 
-    // const newWorkouts = [...workouts];
-    setWorkouts([]);
-  }
+  //   // const newWorkout = [...workout];
+  //   setWorkout([]);
+  // }
 
-  const handlePR = (exerciseIndex, setIndex) => {
-    // marks a set as a personal record
-    const newWorkouts = [...workouts];
+  // const handlePR = (exerciseIndex, setIndex) => {
+  //   // marks a set as a personal record
+  //   const newWorkout = [...workout];
 
-    const currentSets = newWorkouts[exerciseIndex].sets;
+  //   const currentSets = newWorkout[exerciseIndex].sets;
 
-    const updatedSet = {
-      ...currentSets[setIndex],
-      pr: !currentSets[setIndex].pr
-    };
+  //   const updatedSet = {
+  //     ...currentSets[setIndex],
+  //     pr: !currentSets[setIndex].pr
+  //   };
 
-    const updatedSets = [...currentSets];
-    updatedSets[setIndex] = updatedSet;
+  //   const updatedSets = [...currentSets];
+  //   updatedSets[setIndex] = updatedSet;
 
-    const updatedExercise = {
-      ...newWorkouts[exerciseIndex],
-      sets: updatedSets,
-    };
+  //   const updatedExercise = {
+  //     ...newWorkout[exerciseIndex],
+  //     sets: updatedSets,
+  //   };
 
-    newWorkouts[exerciseIndex] = updatedExercise;
+  //   newWorkout[exerciseIndex] = updatedExercise;
 
-    // Update the state
-    setWorkouts(newWorkouts);
-  }
+  //   // Update the state
+  //   setWorkout(newWorkout);
+  // }
 
   const handleChange = (field, exerciseIndex, setIndex, value) => {
-    // changes value of workouts array when textfield is modified
+    // changes value of workout array when textfield is modified
 
-    const newWorkouts = [...workouts];
+    const newWorkout = {...workout};
 
     switch (field) {
       case "weight":
-        newWorkouts[exerciseIndex].sets[setIndex] = {...newWorkouts[exerciseIndex].sets[setIndex], weight: value};
+        newWorkout.exercises[exerciseIndex].sets[setIndex] = {...newWorkout.exercises[exerciseIndex].sets[setIndex], weight: value};
         break;
       case "reps":
-        newWorkouts[exerciseIndex].sets[setIndex] = {...newWorkouts[exerciseIndex].sets[setIndex], reps: value};
+        newWorkout.exercises[exerciseIndex].sets[setIndex] = {...newWorkout.exercises[exerciseIndex].sets[setIndex], reps: value};
         break;
       case "exercise":
-        newWorkouts[exerciseIndex] = {...newWorkouts[exerciseIndex], exercise: value}
+        newWorkout.exercises[exerciseIndex] = {...newWorkout.exercises[exerciseIndex], name: value}
         break;
+      case "name":
+        newWorkout.name = value;
       default:
         console.log("something went wrong");
         break;
     }
 
-    setWorkouts(newWorkouts);
-    console.log("workout change:", workouts);
+    setWorkout(newWorkout);
+    console.log("workout change:", workout);
   }
 
   return (
@@ -180,7 +222,7 @@ const TrainingLog = ({user}) => {
       marginRight: '20px',
       paddingTop: '5px'
     }}>
-          <h2>Welcome, {user.firstName ? user.firstName : "TestUser"} !</h2>
+          <h2>Welcome, {user.firstName ? user.firstName : "User"} !</h2>
           {/* the date */}
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <div style={{ display: 'flex', justifyContent: 'center', gap: '8px' }}>
@@ -209,7 +251,9 @@ const TrainingLog = ({user}) => {
                 <TableRow>
                   <TableCell sx={{backgroundColor: tableTitleColor}}>
                     <TextField 
-                      defaultValue={"Upper Body Workout A"}
+                      value={workout.name ? workout.name : "My Workout"}
+                      defaultValue={workout.name ? workout.name : "My Workout"}
+                      autoWidth
                       onChange={(e) => handleChange("name", -1, -1, e.target.value)}
                       sx={{
                         width: '250px',
@@ -258,15 +302,17 @@ const TrainingLog = ({user}) => {
                 </TableRow>
               </TableHead>
               <TableBody>
-              {workouts.map((exercise, exerciseIndex) => (
+              {Array.isArray(workout?.exercises) && workout.exercises.map((exercise, exerciseIndex) => (
                 <React.Fragment key={exerciseIndex}>
-                  {exercise.sets.map((set, setIndex) => (
-                    <TableRow key={`${set.id}`}>
+                  {Array.isArray(exercise.sets) && exercise.sets.map((set, setIndex) => (
+                    <TableRow key={`set-${setIndex}`}>
                       <TableCell sx={{backgroundColor: tableCellColor[exerciseIndex % 2]}}>
                         
                         {setIndex === 0 ? 
                           <TextField 
-                            defaultValue={exercise.exercise}
+                            value={exercise.name && exercise.name}
+                            defaultValue={exercise.name ? exercise.name : "New Exercise"}
+                            autoWidth
                             onChange={(e) => handleChange("exercise", exerciseIndex, setIndex, e.target.value)}
                             sx={{
                               width: '200px',
@@ -284,7 +330,7 @@ const TrainingLog = ({user}) => {
                       </TableCell>
                       <TableCell sx={{textAlign: 'center', backgroundColor: tableCellColor[exerciseIndex % 2]}}>
                         <TextField 
-                          defaultValue={set.weight}
+                          value={set.weight}
                           onChange={(e) => handleChange("weight", exerciseIndex, setIndex, e.target.value)}
                           sx={{
                             width: '100px',
@@ -301,7 +347,7 @@ const TrainingLog = ({user}) => {
                       </TableCell>
                       <TableCell sx={{textAlign: 'center', backgroundColor: tableCellColor[exerciseIndex % 2]}}>
                         <TextField 
-                          defaultValue={set.reps}
+                          value={set.reps ? set.reps : "0"}
                           onChange={(e) => handleChange("reps", exerciseIndex, setIndex, e.target.value)}
                           sx={{
                             width: '100px',
@@ -321,7 +367,7 @@ const TrainingLog = ({user}) => {
                             sx={{marginLeft: '10px', marginRight: '10px'}}
                             onClick={() => handlePR(exerciseIndex, setIndex)}
                           >
-                            {workouts[exerciseIndex].sets[setIndex].pr ? <Star /> : <StarBorder />}
+                            {workout.exercises[exerciseIndex].sets[setIndex].pr ? <Star /> : <StarBorder />}
                           </Button>
                         </Tooltip>
                         <Tooltip title="Delete set">
